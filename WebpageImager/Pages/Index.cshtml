@@ -1,0 +1,17 @@
+﻿@page
+@model WebpageImager.Pages.IndexModel
+@{
+	ViewData["Title"] = "Home page";
+}
+
+<img src="" id="img"/>
+<script>
+	function changeImage() {
+		var timestamp = new Date().getTime();
+		var queryString = "?t=" + timestamp;
+		document.getElementById("img").src="/Image" + queryString;
+
+		setTimeout(changeImage, 3000);
+	}
+	changeImage();
+</script>
