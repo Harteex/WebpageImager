@@ -21,7 +21,12 @@ namespace WebpageImager.Controllers
         public IActionResult Get()
         {
             var chrome = HttpContext.RequestServices.GetService<ChromeService>();
-            var image = chrome.GetScreenshot();
+            var image = chrome?.GetScreenshot();
+
+            if (image == null)
+            {
+                return StatusCode(500);
+            }
 
             return File(image, "image/png");
         }

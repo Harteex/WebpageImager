@@ -5,11 +5,13 @@ namespace WebpageImager.Services
 {
     public class ChromeService : BackgroundService
     {
-        ChromeDriver driver = null;
+        ChromeDriver? driver = null;
 
         string executablePath;
         string windowSize;
         string url;
+
+        bool stopped = false;
 
         public ChromeService(string executablePath, string windowSize, string url)
         {
@@ -28,8 +30,13 @@ namespace WebpageImager.Services
             driver.Navigate().GoToUrl(url);
         }
 
-        public byte[] GetScreenshot()
+        public byte[]? GetScreenshot()
         {
+            if (stopped || driver == null)
+            {
+                return null;
+            }
+
             lock (this)
             {
                 var screenshot = (driver as ITakesScreenshot).GetScreenshot();
@@ -62,15 +69,22 @@ namespace WebpageImager.Services
             }
             catch (OperationCanceledException)
             {
+                Console.WriteLine("Cancellation requested");
                 return;
             }
-            finally
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            Console.WriteLine("Stopping...");
+            stopped = true;
+
+            if (driver != null)
             {
-                if (driver != null)
-                {
-                    driver.Close();
-                    driver.Quit();
-                }
+                Console.WriteLine("Stopping driver");
+                driver.Quit();
+                driver = null;
+                Console.WriteLine("Driver stopped");
             }
         }
     }
