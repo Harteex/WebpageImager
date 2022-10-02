@@ -10,7 +10,7 @@
 	function changeImage() {
 		var timestamp = new Date().getTime();
 		var queryString = "?t=" + timestamp;
-		document.getElementById("img").src="/Image" + queryString;
+		document.getElementById("img").src="Image" + queryString;
 
 		setTimeout(changeImage, 3000);
 	}
